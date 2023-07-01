@@ -1,0 +1,28 @@
+div{
+    /* display: flex; */
+    background-color: aquamarine;
+    text-align: center;
+    padding: 1em;
+    margin: 0px;
+}
+form#form{
+    text-align: center;
+}
+input#entrar{
+    width: 350px;
+    height: 30px;
+    border-radius: 25px;
+    margin-top: 50px;
+}
+table {
+    width: 100%;
+    margin-top: 3em;
+    border: 1px solid black;
+}
+table th{
+    padding: 10px;
+}
+input#salvar{
+    height: 30px;
+    margin-left: 10px;
+}
