@@ -12,7 +12,7 @@ async function load() {
     const res = await fetch('http://localhost:3000/')
         .then(data => data.json())
     // Iterando no vetor com o conteúdo (JSON) que está vindo da API e adicionando-os no frontend.
-    res.urls.map(({name, url}) => addElement({name, url}))
+    res.urls.map(({name, url}) => addElementApi({name, url}))
 }
 
 load()
@@ -20,18 +20,48 @@ load()
 
 function addElement({ name, url }) {
     const li = document.createElement('li');
-    li.innerHTML = `<a href="${url}"> ${name}</a><input type="button"  id="remover" onclick="removeElement(this)" class="botao" value="Remover">`
+    li.innerHTML = `<a href="${url}"> ${name}</a><input type="button"  id="remover" target="_blank" onclick="removeElement(this)" class="botao" value="Remover">`
     ul.appendChild(li)
+    try{
+        fetch(`http://localhost:3000/?name=${name}&url=${url}`,
+        {method:'POST'})
+        return
+    }catch(error){
+        console.log('erro na requisição')
+    }
     
    
 }
+function addElementApi({ name, url }) {
+    const li = document.createElement('li');
+    li.innerHTML = `<a href="${url}"> ${name}</a><input type="button"  id="remover" target="_blank" onclick="removeElement(this)" class="botao" value="Remover">`
+    ul.appendChild(li)
+}
 
 function removeElement(element) {
-    var liRemover = element.parentNode; // Obtém o elemento pai (li) do botão clicado
-    var ul = liRemover.parentNode; // Obtém o elemento pai (ul) do elemento li
+    const liRemover = element.parentNode; // Obtém o elemento pai (li) do botão clicado
+    const linkElement = liRemover.querySelector('a');
+    const url = linkElement.getAttribute('href');
+    const name = linkElement.textContent;
+
+    const ul = liRemover.parentNode; // Obtém o elemento pai (ul) do elemento li
     
-    if(confirm('Deseja remover esse link?'))ul.removeChild(liRemover);
+    if (confirm('Deseja remover esse link?')) {
+        try {
+            // Faz uma solicitação DELETE para a API usando a URL e o nome obtidos
+            fetch(`http://localhost:3000/?name=${name}&url=${url}&del=1`, {
+                method: 'DELETE'
+            
+            });
+
+            // Remove o elemento da lista no frontend
+            ul.removeChild(liRemover);
+        } catch (error) {
+            console.error('Erro na solicitação para a API', error);
+        }
+    }
 }
+
 
 form.addEventListener('submit', (event) => {
     // Impede o comportamento padrão do evento de envio do formulário

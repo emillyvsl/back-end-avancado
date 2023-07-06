@@ -2,15 +2,15 @@
   "urls": [
     {
       "name": "Google",
-      "url": "https://www.google.com"
+      "url": "https://google.com"
     },
     {
-      "name": "Facebook",
-      "url": "https://www.facebook.com"
+      "name": "LUCAS",
+      "url": "http://nfiafd.com"
     },
     {
-      "name": "Instagram",
-      "url": "https://instagram.com"
+      "name": "emi",
+      "url": "http"
     }
   ]
 }
