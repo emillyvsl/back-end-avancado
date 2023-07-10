@@ -25,7 +25,18 @@
     border-radius: 25px;
     margin-top: 50px;
   }
-  
+  #editarInput{
+    width: 125px;
+    height: 20px;
+    border-radius: 25px;
+    margin-top: 10px;
+    /* margin-top: 50px; */
+  }
+label{
+  font-size: 15px;
+  margin: 10px;
+}
+
   #salvar {
     height: 30px;
     margin-left: 10px;
@@ -54,7 +65,7 @@
     font-size: 20px;
   }
   
-  #remover {
+  #remover,#editar {
     background-color: #ffb4b1;
     color: rgb(0, 0, 0);
     border-radius: 4px;
@@ -62,6 +73,7 @@
     border: none;
     height: 30px;
     float: right;
+    margin-left: 1em;
   }
   #remover:hover{
     background-color: #f59592;
@@ -86,5 +98,13 @@
   }
   a:hover{
     color: #334a5c;
+  }
+
+  #div_editar{
+    display: flex;
+    justify-content: center;
+    height: 40%;
+    margin-right: 55px;
+    margin-top: 10px;
   }
   

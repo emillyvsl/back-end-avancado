@@ -1,91 +1,137 @@
-const ul = document.querySelector('ul')
-const input = document.querySelector('input')
-const form = document.querySelector('form')
+const ul = document.querySelector('ul');
+const input = document.querySelector('input');
+const form = document.querySelector('form');
 
-
-
-// Não se preocupem com esse pedaço de código comentado! Vamos descomentá-lo quando tivermos acabado de construir a API.
-
-// Função que carrega o conteúdo da API.
 async function load() {
-    // fetch está como await para evitar que entre num esquema de promisse e só devolva o conteúdo após a iteração qua acontece em seguida.
-    const res = await fetch('http://localhost:3000/')
-        .then(data => data.json())
-    // Iterando no vetor com o conteúdo (JSON) que está vindo da API e adicionando-os no frontend.
-    res.urls.map(({name, url}) => addElementApi({name, url}))
+  const res = await fetch('http://localhost:3000/').then(data => data.json());
+  res.urls.map(({ name, url }) => addElementApi({ name, url }));
 }
 
-load()
-
+load();
 
 function addElement({ name, url }) {
-    const li = document.createElement('li');
-    li.innerHTML = `<a href="${url}"> ${name}</a><input type="button"  id="remover" target="_blank" onclick="removeElement(this)" class="botao" value="Remover">`
-    ul.appendChild(li)
-    try{
-        fetch(`http://localhost:3000/?name=${name}&url=${url}`,
-        {method:'POST'})
-        return
-    }catch(error){
-        console.log('erro na requisição')
-    }
-    
-   
+  const li = document.createElement('li');
+  li.innerHTML = `
+    <a href="${url}">${name}</a>
+    <input type="button" id="remover" onclick="removeElement(this)" class="botao" value="Remover">
+    <input type="button" id="editar" onclick="editElement(this)" class="botao" value="Editar">
+  `;
+  ul.appendChild(li);
+  try {
+    fetch(`http://localhost:3000/?name=${name}&url=${url}`, { method: 'POST' });
+    return;
+  } catch (error) {
+    console.log('Erro na requisição');
+  }
 }
+
 function addElementApi({ name, url }) {
-    const li = document.createElement('li');
-    li.innerHTML = `<a href="${url}"> ${name}</a><input type="button"  id="remover" target="_blank" onclick="removeElement(this)" class="botao" value="Remover">`
-    ul.appendChild(li)
+  const li = document.createElement('li');
+  li.innerHTML = `
+    <a href="${url}">${name}</a>
+    <input type="button" id="remover" onclick="removeElement(this)" class="botao" value="Remover">
+    <input type="button" id="editar" onclick="editElement(this)" class="botao" value="Editar">
+  `;
+  ul.appendChild(li);
 }
 
 function removeElement(element) {
-    const liRemover = element.parentNode; // Obtém o elemento pai (li) do botão clicado
-    const linkElement = liRemover.querySelector('a');
-    const url = linkElement.getAttribute('href');
-    const name = linkElement.textContent;
+  const liRemover = element.parentNode;
+  const linkElement = liRemover.querySelector('a');
+  const url = linkElement.getAttribute('href');
+  const name = linkElement.textContent;
+  const ul = liRemover.parentNode;
 
-    const ul = liRemover.parentNode; // Obtém o elemento pai (ul) do elemento li
-    
-    if (confirm('Deseja remover esse link?')) {
-        try {
-            // Faz uma solicitação DELETE para a API usando a URL e o nome obtidos
-            fetch(`http://localhost:3000/?name=${name}&url=${url}&del=1`, {
-                method: 'DELETE'
-            
-            });
+  if (confirm('Deseja remover esse link?')) {
+    try {
+      fetch(`http://localhost:3000/?name=${name}&url=${url}&del=1`, {
+        method: 'DELETE'
+      });
 
-            // Remove o elemento da lista no frontend
-            ul.removeChild(liRemover);
-        } catch (error) {
-            console.error('Erro na solicitação para a API', error);
-        }
+      ul.removeChild(liRemover);
+    } catch (error) {
+      console.error('Erro na solicitação para a API', error);
     }
+  }
 }
 
+function editElement(element) {
+  element.disabled = true
+  const liEditar = element.parentNode;
+  const linkElement = liEditar.querySelector('a');
+  const url = linkElement.getAttribute('href');
+  const name = linkElement.textContent;
 
-form.addEventListener('submit', (event) => {
-    // Impede o comportamento padrão do evento de envio do formulário
-    event.preventDefault();
+  const editarContainer = document.createElement('div');
+  editarContainer.setAttribute('id','div_editar')
+  const nameLabel = document.createElement('label');
+  const nameInput = document.createElement('input');
+  const urlLabel = document.createElement('label');
+  const urlInput = document.createElement('input');
+  const saveButton = document.createElement('button');
+  nameInput.setAttribute('id','editarInput');
+  urlInput.setAttribute('id','editarInput');
 
-    let { value } = input;
+  saveButton.setAttribute('id','salvar')
 
-    // Verifica se o campo está vazio
-    if (!value)
-        return alert('Preencha o campo!');
+  nameLabel.textContent = 'Nome:';
+  nameInput.type = 'text';
+  nameInput.value = name;
 
-    const [name, url] = value.split(',');
+  urlLabel.textContent = 'URL:';
+  urlInput.type = 'text';
+  urlInput.value = url;
 
-    // Verifica se o texto está formatado corretamente
-    if (!url)
-        return alert('O texto não está formatado da maneira correta.');
+  saveButton.textContent = 'Salvar';
 
-    // Verifica se a URL começa com 'http'
-    if (!/^http/.test(url))
-        return alert('Digite a URL da maneira correta.');
+  saveButton.addEventListener('click', () => {
+    const newName = nameInput.value;
+    const newUrl = urlInput.value;
+    update(url, newName, newUrl);
+  });
 
-    // Chama a função addElement passando o nome e a URL extraídos do valor do campo
-    addElement({ name, url });
+  editarContainer.appendChild(nameLabel);
+  editarContainer.appendChild(nameInput);
+  editarContainer.appendChild(urlLabel);
+  editarContainer.appendChild(urlInput);
+  editarContainer.appendChild(saveButton);
 
-    // Limpa o valor do campo de entrada
-    input.value = '';
+  liEditar.appendChild(editarContainer);
+}
+
+function update(url, newName, newUrl) {
+  if (newName && newUrl) {
+    try {
+      fetch(`http://localhost:3000/?update=${url}&name=${newName}&url=${newUrl}`, {
+        method: 'PUT'
+      });
+
+      const updatedLink = document.querySelector(`a[href="${url}"]`);
+      updatedLink.textContent = newName;
+      updatedLink.setAttribute('href', newUrl);
+
+      // Remover os campos de edição após atualizar
+      const editarContainer = updatedLink.parentNode.querySelector('div');
+      updatedLink.parentNode.removeChild(editarContainer);
+    } catch (error) {
+      console.error('Erro na solicitação para a API', error);
+    }
+  }
+}
+
+form.addEventListener('submit', event => {
+  event.preventDefault();
+
+  let { value } = input;
+
+  if (!value) return alert('Preencha o campo!');
+
+  const [name, url] = value.split(',');
+
+  if (!url) return alert('O texto não está formatado da maneira correta.');
+  if (!/^http/.test(url)) return alert('Digite a URL da maneira correta.');
+
+  addElement({ name, url });
+
+  input.value = '';
 });
