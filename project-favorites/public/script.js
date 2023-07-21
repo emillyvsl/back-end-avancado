@@ -1,3 +1,76 @@
+// // Seleciona o elemento <ul> no documento HTML e o armazena na variável 'ul'
+// const ul = document.querySelector('ul');
+
+// // Função para carregar as URLs do servidor
+// async function loadUrls() {
+//   try {
+//     // Faz uma requisição GET para obter as URLs do backend
+//     const response = await fetch('http://localhost:3000/urls');
+//     const data = await response.json();
+//     const urls = data.map(obj => ({
+//       name: obj.name,
+//       url: obj.url
+//     }));
+
+//     // Limpa a lista antes de adicionar as URLs
+//     ul.innerHTML = '';
+
+//     // Adiciona as URLs na lista
+//     urls.forEach(url => {
+//       const li = document.createElement('li');
+//       const a = document.createElement('a');
+//       a.href = url.url;
+//       a.textContent = url.name;
+//       li.appendChild(a);
+//       ul.appendChild(li);
+//     });
+//   } catch (error) {
+//     console.error('Erro ao carregar as URLs:', error);
+//   }
+// }
+
+// // Chama a função para carregar as URLs ao carregar a página
+// window.addEventListener('load', loadUrls);
+
+// // Função para adicionar uma URL
+// async function addUrl() {
+//   try {
+//     const name = document.getElementById('nameInput').value;
+//     const url = document.getElementById('urlInput').value;
+
+//     // Faz uma requisição POST para adicionar a URL no backend
+//     await fetch('http://localhost:3000/add', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json'
+//       },
+//       body: JSON.stringify({ name, url })
+//     });
+
+//     // Atualiza a lista de URLs
+//     loadUrls();
+//   } catch (error) {
+//     console.error('Erro ao adicionar a URL:', error);
+//   }
+// }
+
+// // Função para remover uma URL
+// async function removeUrl(event) {
+//   try {
+//     const url = event.target.getAttribute('href');
+
+//     // Faz uma requisição DELETE para remover a URL do backend
+//     await fetch(`http://localhost:3000/delete?url=${encodeURIComponent(url)}`, {
+//       method: 'DELETE'
+//     });
+
+//     // Atualiza a lista de URLs
+//     loadUrls();
+//   } catch (error) {
+//     console.error('Erro ao remover a URL:', error);
+//   }
+// }
+//ACIMA UMA TENTATIVA DE LIGAÇÃO COM O MONGO DB
 // Seleciona o elemento <ul> no documento HTML e o armazena na variável 'ul'
 const ul = document.querySelector('ul');
 
